@@ -1,0 +1,3 @@
+Legg til logging av om vitenskap ~10% trigges, samt hvilken av kravene som lot botten svare
+
+botten svarer på alle meldinger som har en refereanse, men den skal kun svare på disse dersom den også blir tagget eller svart til
