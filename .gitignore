@@ -1,0 +1,5 @@
+/.env
+/commands backup.py
+/Discord bot.code-workspace
+/main backup.py
+/__pycache__
