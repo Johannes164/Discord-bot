@@ -26,3 +26,43 @@ Det er alltid viktig å evaluere forvalterne av skaperverket, for vi ønsker at 
 
 2025-01-30 23:29:45 - Kanal: [#bot-testing] | Forfatter: Kirketjeneren#0894 | Melding:
 Det er alltid viktig å evaluere forvalterne av skaperverket, for vi ønsker at de skal ha en visdom som er i samsvar med Guds intensjoner. Når vi snakker om ansvarlig forvaltning, kan menneskelige valg ofte påvirke den naturlige balansen, noe som også bør være en refleksjon over hvem vi velger som ledere.
+2025-01-30 23:39:19 - Kanal: [#bot-testing] | Forfatter: j6hannes | Melding:
+test https://discord.com/channels/1333386695978258442/1333525486747521095/1334600553711271988
+2025-01-30 23:39:19 - Fant referanse i meldingen: 1334600553711271988
+Meldingen som refereres til: hvordan går det <@1333496628132450354>
+
+2025-01-30 23:39:21 - Input/Output lagret til memory.json
+2025-01-30 23:39:21 - AI input: "
+Bruker refererer til:
+hvordan går det <@1333496628132450354>
+
+Brukerens melding:
+test https://discord.com/channels/1333386695978258442/1333525486747521095/1334600553711271988
+"
+
+2025-01-30 23:39:21 - AI output: "
+Det virker som om diskusjonen kanskje beveger seg mot en interessant vinkling, men husk at sanne leksjoner fra naturen og Guds skaperverk ofte finnes i vår evne til å skape en balanse mellom de ulike kreftene i vårt miljø. Det er alltid verdt å reflektere over hvilket ansvar vi har i vår forvaltning av alt levende.
+"
+
+2025-01-30 23:39:21 - Kanal: [#bot-testing] | Forfatter: Kirketjeneren#0894 | Melding:
+Det virker som om diskusjonen kanskje beveger seg mot en interessant vinkling, men husk at sanne leksjoner fra naturen og Guds skaperverk ofte finnes i vår evne til å skape en balanse mellom de ulike kreftene i vårt miljø. Det er alltid verdt å reflektere over hvilket ansvar vi har i vår forvaltning av alt levende.
+2025-01-30 23:57:30 - Kanal: [#bot-testing] | Forfatter: j6hannes | Melding:
+test
+2025-01-30 23:57:30 - Fant referanse i meldingen: 1334654198481944627
+Meldingen som refereres til: test https://discord.com/channels/1333386695978258442/1333525486747521095/1334600553711271988
+
+2025-01-30 23:57:32 - Input/Output lagret til memory.json
+2025-01-30 23:57:32 - AI input: "
+Bruker refererer til:
+test https://discord.com/channels/1333386695978258442/1333525486747521095/1334600553711271988
+
+Brukerens melding:
+test
+"
+
+2025-01-30 23:57:32 - AI output: "
+Det ser ut som en testmelding! Husk at selv testmeldinger kan inneholde muligheter for innsikt. Hvordan er vi i stand til å bruke teknologien vi har fått for å hedre Guds skaperverk?
+"
+
+2025-01-30 23:57:32 - Kanal: [#bot-testing] | Forfatter: Kirketjeneren#0894 | Melding:
+Det ser ut som en testmelding! Husk at selv testmeldinger kan inneholde muligheter for innsikt. Hvordan er vi i stand til å bruke teknologien vi har fått for å hedre Guds skaperverk?

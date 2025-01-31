@@ -2,11 +2,11 @@ import os
 from dotenv import load_dotenv
 import discord as dc
 from discord.ext import commands
-from responses import get_response
-from llm import ask_ai
+import llm
 import random as rd
-from datetime import datetime
+import datetime as dt
 import json
+import re
 
 # Laster token fra .env
 load_dotenv()
@@ -21,6 +21,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 last_bot_message_id = None
 memory = {}
 log_file = None
+mute_until = None
 
 # bot er klar
 @bot.event
@@ -62,69 +63,103 @@ async def on_ready():
 @bot.event
 async def on_message(message: dc.Message) -> None:
     global last_bot_message_id
+    
+    if handle_mute(message.content):
+        return
+    
+    if mute_until and dt.datetime.now() < mute_until:
+        return
 
     # Logg innkommende melding
     log(f"Kanal: [#{message.channel.name}] | Forfatter: {message.author} | Melding:\n{message.content}")
     if message.author == bot.user:
         return
     
-    #if str(message.channel.id) != "1333525486747521095" and bot.user not in message.mentions:
-    #    return
-    
-    should_respond = rd.random() < 0.15
-    
+    # Sjekk triggere
     mentioned = bot.user in message.mentions
     replying_to_bot = (
         message.reference and
         message.reference.message_id == last_bot_message_id
     )
+    random_trigger = (rd.random() < 0.15) # 15% sjanse for å svare uavhengig av andre triggere
     
     # sjekk om det er en referanse til en tidligere melding
     referenced_message = await get_referenced_message(message)
-    
-    if referenced_message:
-        user_input = f"Bruker refererer til:\n{referenced_message.content}\n\nBrukerens melding:\n{message.content}"
-        log(f"Fant referanse i meldingen: {referenced_message.id}\nMeldingen som refereres til: {referenced_message.content}\n")
-    else:
-        user_input = message.content
+    referencing_bot = False
+    if referenced_message and referenced_message.author == bot.user:
+        referencing_bot = True
         
-    if mentioned or replying_to_bot or referenced_message or should_respond:
-        # kall AI
-        bot_reply = ask_ai(
+    respond = False
+    respond_reason = None
+    
+    if mentioned:
+        respond = True
+        respond_reason = "mention"
+    elif replying_to_bot:
+        respond = True
+        respond_reason = "reply_to_bot"
+    elif referencing_bot:
+        respond = True
+        respond_reason = "reference_bot"
+    elif random_trigger:
+        respond = True
+        respond_reason = "random_chance"
+    else:
+        respond_reason = "classification"
+        classification_result = llm.should_respond_openai(message.content)
+        log(f"Klassifisering fra LLM: {classification_result}")
+        
+        respond = classification_result
+        if respond:
+            respond_reason = "classification=YES"
+        else:
+            respond_reason = "classification=NO"
+            
+        
+    if respond:
+        if referencing_bot:
+            user_input = f"(Referanse til botens tidligere melding)\n{message.content}"
+        else:
+            user_input = message.content
+            
+        bot_reply = llm.ask_ai(
             conversation=memory.get("messages", []),
             user_message=user_input,
             temperature=1.2
         )
+    
+        if bot_reply.upper() == "NO_ANSWER":
+            log(f"AI returnerte NO_ANSWER, avbryter.")
+            return
         
         # legg til i memory
-        # 1) brukermelding
-        memory.setdefault("messages", []).append({"role": "user", "content": user_input}) 
-        # 2) botsvar
+        memory.setdefault("messages", []).append({"role": "user", "content": user_input})
         memory["messages"].append({"role": "assistant", "content": bot_reply})
         save_memory()
         
+        log(f"Trigger: {respond_reason}")
         log(f"AI input: \"\n{user_input}\n\"\n")
         log(f"AI output: \"\n{bot_reply}\n\"\n")
-    
+        
         sent_message = await message.channel.send(bot_reply)
         last_bot_message_id = sent_message.id
         
-#    await send_message(message, user_message)
-    
-    
-#async def send_message(message: dc.Message, user_message: str) -> None:
-#    if not user_message:
-#        print("Melding var tom. Kanskje intents ikke er satt opp riktig?")
-#        return
-#    
-#    if is_private := user_message[0] == "?":
-#        user_message = user_message[1:]
-#    
-#    try:
-#        response: str = get_response(message, user_message)
-#        await message.author.send(response) if is_private else await message.channel.send(response)
-#    except Exception as e:
-#        print(e)
+def handle_mute(content: dc.Message) -> bool:
+    global mute_until
+    match = re.match(r"^Mute (\d+)([mh])$", content.strip(), re.IGNORECASE) # sjekker om meldingen er "Mute <tall><m/h>". 
+    if match:
+        amount, unit = int(match.group(1)), match.group(2).lower()
+        duration = dt.timedelta(minutes=amount) if unit == "m" else dt.timedelta(hours=amount)
+        
+        if amount == 0:
+            mute_until = None
+            log("Botten er ikke lenger mutet.")
+        else:
+            mute_until = dt.datetime.now() + duration
+            log(f"Botten er mutet til {mute_until.strftime('%Y-%m-%d %H:%M:%S')}.")
+            
+        return True
+    return False
 
 def load_memory():
     """Laster samtalehistorikk fra memory.json hvis den finnes."""
@@ -156,9 +191,9 @@ def init_logging():
     if not os.path.exists("logs"):
         os.makedirs("logs")
         
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    timestamp = dt.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filename = f"logs/botlog_{timestamp}.txt"
-    log_file = open(filename, "w", encoding="utf-8")
+    log_file = open(filename, "w", encoding="utf-8-sig")
     
 def log(text: str):
     """Skriver en linje til loggfilen og flusher."""
@@ -166,9 +201,7 @@ def log(text: str):
     if log_file is None:
         print("Loggfil ikke initialisert!")
         return
-    log_file.write(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {text}\n")
-    global logtab
-    logtab = "                    - "
+    log_file.write(f"{dt.datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {text}\n") # "                    - "
     log_file.flush() # Tvinger skriving til disk
 
 async def get_referenced_message(message: dc.Message):

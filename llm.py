@@ -6,33 +6,71 @@ load_dotenv()
 KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=KEY)
 
+CLASSIFICATION_PROMPT = """
+Du er en kristen-kreasjonistisk chatbot ved navn Kirketjeneren.
+Du mottar en brukermelding.
+Vurder om denne meldingen:
+ - Handler om Kirketjeneren (deg),
+ - Nevner "kirketjeneren" direkte, 
+ - er relevant for dine bibelske/kreasjonistiske interesser,
+ - eller er ment som et spørsmål / henstilling til deg.
 
-SYSTEM_PROMPT = """
-Du er en overbevist kreasjonist som tror:
-- Gud skapte jorden og bibelen
-- Vitenskap og evolusjon er stort sett feil og korrupt.
-Men ~10% sjanse: drypp inn vitenskapelige hint - ikke for å overbevise, men for å provosere litt - få kreasjonister til å reflektere
-
-Svar kort og konsist helst <= 2 setninger.
-Krever en melding lengre forklaring, kan du en sjelden gang utdype opp til 10 setninger.
+Hvis JA, skriv nøyaktig 'YES'.
+Hvis NEI, skriv nøyaktig 'NO'.
+Ingen annen forklaring eller tegn.
 """
 
-MAX_HISTORY = 1
+def should_respond_openai(user_message: str) -> bool:
+    """
+    Kaller en enkel prompt som ber modellen svare "YES" eler "NO" om boten bør svare på meldingen.
+    """
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": CLASSIFICATION_PROMPT},
+            {"role": "user", "content": user_message}
+        ],
+        temperature=0.0,
+        max_tokens=1,
+    )
+    answer = response.choices[0].message.content.strip().upper()
+    print(f"klassifikasjon svarte: {answer}")
+    return answer == "YES"
+
+DEFAULT_SYSTEM_PROMPT = """
+Du er 'Kirketjeneren', en troende kreasjonist-bot:
+1. Du mener Gud skapte jorden og Bibelen er Guds ord.
+2. Vitenskap og evolusjon er for det meste korrupt og feil.
+3. Likevel, med omtrent 10% sannsynlighet, kan du dryppe
+   inn vitenskapelige hint, for å trigge refleksjon og
+   litt for å provosere kreasjonister.
+4. Svar vanligvis kort (<= 3 setninger). Hvis brukeren
+   spesifikt ber om mer info, kan du utdype i opptil ~6-10
+   setninger, men ikke lengre.
+5. Du rolle-spiller, og om du mener det eller ei, bør du ikke si
+   ting som "ifølge bibelen" osv, men si det som om det er du
+   selv som mener det.
+6. Dersom meldingen er totalt irrelevant for deg,
+   svar med 'NO_ANSWER'.
+"""
+
+MAX_HISTORY = 5
 
 def ask_ai(conversation: list, user_message: str, temperature: float = 1.2) -> str:
     """
     conversation: liste av dicts, f.eks.:
-    [
-      {"role": "user", "content": "Hei, hvem skapte jorda?"},
-      {"role": "assistant", "content": "Gud er skaperen..."}
-    ]
-    user_message: str (brukerens nye melding/spørsmål)
-    temperature: hvor 'kreativt' svaret blir
+      [ {"role": "user", "content": "..."},
+        {"role": "assistant", "content": "..."} ]
 
-    Returnerer chatbotens svar (string).
+    user_message: brukerens nye melding
+    system_prompt: str - prompten vi sender inn som 'system'
+    temperature: float - "kreativitet"
+
+    Returnerer enten "NO_ANSWER" eller botens svar.
     """
     # start med system prompt
-    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages = []
+    messages.append({"role": "system", "content": DEFAULT_SYSTEM_PROMPT})
     
     truncated_conversation = conversation[-(MAX_HISTORY*2):]
     
@@ -46,7 +84,7 @@ def ask_ai(conversation: list, user_message: str, temperature: float = 1.2) -> s
         model="gpt-4o-mini",
         messages=messages,
         temperature=temperature,
-        max_tokens=256,
+        max_tokens=512,
     )
     
     assistant_reply = response.choices[0].message.content

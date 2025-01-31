@@ -1,0 +1,38 @@
+﻿2025-01-31 01:30:54 - ------------------------------------------------
+2025-01-31 01:30:54 - Bot 'Kirketjeneren#0894' har koblet til Discord!
+2025-01-31 01:30:54 - Starter lasting av memory...
+2025-01-31 01:30:54 - Memory lastet fra memory.json
+2025-01-31 01:30:55 - commands.py lastet inn!
+2025-01-31 01:30:55 - Synkroniserte 2 kommando(er)
+2025-01-31 01:30:55 - ------------------------------------------------
+
+2025-01-31 01:30:58 - Kanal: [#bot-testing] | Forfatter: j6hannes | Melding:
+Det går bra med meg, hva mener du med forvaltning?
+2025-01-31 01:31:01 - Input/Output lagret til memory.json
+2025-01-31 01:31:01 - Trigger: mention
+2025-01-31 01:31:01 - AI input: "
+(Referanse til botens tidligere melding)
+Det går bra med meg, hva mener du med forvaltning?
+"
+
+2025-01-31 01:31:01 - AI output: "
+Forvaltning innebærer å ta vare på og styre de ressursene og skapningen som Gud har gitt oss. Det omfatter ansvarlige handlinger for å bevare naturen og dens mangfold, samt å sikre at våre handlinger ikke skader miljøet eller andre skapninger. Ved å forstå vår rolle i dette, kan vi bedre ære Guds skaperverk.
+"
+
+2025-01-31 01:31:01 - Kanal: [#bot-testing] | Forfatter: Kirketjeneren#0894 | Melding:
+Forvaltning innebærer å ta vare på og styre de ressursene og skapningen som Gud har gitt oss. Det omfatter ansvarlige handlinger for å bevare naturen og dens mangfold, samt å sikre at våre handlinger ikke skader miljøet eller andre skapninger. Ved å forstå vår rolle i dette, kan vi bedre ære Guds skaperverk.
+2025-01-31 01:31:49 - Kanal: [#bot-testing] | Forfatter: j6hannes | Melding:
+hva tenker du om evolusjon
+2025-01-31 01:31:50 - Klassifisering fra LLM: True
+2025-01-31 01:31:53 - Input/Output lagret til memory.json
+2025-01-31 01:31:53 - Trigger: classification=YES
+2025-01-31 01:31:53 - AI input: "
+hva tenker du om evolusjon
+"
+
+2025-01-31 01:31:53 - AI output: "
+Evolusjonsteorien er i stor grad basert på ideer som strider mot troen på at Gud skapte jorden og alt liv. Ifølge Bibelen ble alle arter skapt unikt av Gud, og mange kreasjonister mener at evolusjon er en feilaktig forklaring på livets opprinnelse. Jeg oppfordrer alltid til å se på skapelsens kompleksitet som et bevis på Guds design.
+"
+
+2025-01-31 01:31:53 - Kanal: [#bot-testing] | Forfatter: Kirketjeneren#0894 | Melding:
+Evolusjonsteorien er i stor grad basert på ideer som strider mot troen på at Gud skapte jorden og alt liv. Ifølge Bibelen ble alle arter skapt unikt av Gud, og mange kreasjonister mener at evolusjon er en feilaktig forklaring på livets opprinnelse. Jeg oppfordrer alltid til å se på skapelsens kompleksitet som et bevis på Guds design.
